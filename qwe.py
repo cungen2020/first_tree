@@ -6,4 +6,7 @@ a
 d
 ad
 w
+eqwe
+uyi
+object
 
