@@ -10,18 +10,16 @@ class Branch:
     """表示一个树枝"""
 
     def __init__(self, situation, name, father_name="tree", wins=0, matchs=0):
-        """sdad """
-        self.name = name
-        self.father = father_name
+        """初始化"""
+        self.name = name             #节点ID
+        self.father = father_name    #父节点ID
         self.situation = situation
-        self.name_subbranch = []
-        self.num_subbranch = 0
-        self.leaf = 0
+        self.name_subbranch = []     #子节点ID
+        self.num_subbranch = 0       #子节点总量
+        self.leaf = 0                #是否为叶
         if sum(sum(self.situation)) == 0:
             self.leaf = 1
-        self.wins = wins
-        self.matchs = matchs
-        self.current_player = 1  # 1表示当前player,-1表示对手
+        self.current_player = 1  # 1和-1表示两个参与者
 
     def creat_subbranch(self):
         if self.leaf:
@@ -195,6 +193,5 @@ while 1:
         print('----------------------------')
         break
     current_branch = names[your_branch]
-print(tree_34.num_subbranch)
 
 
