@@ -1,5 +1,5 @@
 import numpy as np
-
+import time
 
 def com(x):
     flag = "asd"
@@ -11,6 +11,4 @@ def com(x):
 print(com(222)[1])
 for i in []:
     print('sd')
-
-
 
