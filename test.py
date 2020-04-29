@@ -1,6 +1,6 @@
 import numpy as np
 import time as time
-
+import math
 def com(x):
     flag = "asd"
     for i in range(100):
