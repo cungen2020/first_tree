@@ -131,9 +131,12 @@ class Branch:
             nums = [int(n) for n in input().split()]
             for num in nums:
                 new_situation=self.situation.copy()
-                new_situation[num//4-1][num%4-1]=0
+                new_situation[num//4][num%4-1]=0
             for name in self.name_subbranch:
-                if (names[name].situation == new_situation).all():                   
+                if (names[name].situation == new_situation).all():
+                    print()  11
+                    print('The situation now :')
+                    print(new_situation)                 
                     return name
             print('Invid input !!!')
 
@@ -144,15 +147,12 @@ tree = Branch(a, 'tree')
 
 current_branch = tree
 while 1:
-    if current_branch.leaf:
-        print('------------------')
-        print('-----YOU WIN------')
-        print('------------------')
-    break
-    
+   
     current_branch.creat_subbranch()
-    for i in range(current_branch.num_subbranch):
-        current_branch.expend1()
+    for name in current_branch.name_subbranch:
+        for i in range(10):
+            names[name].expend1()
+        
     win_matchs={}
     UCB={}
     num_match=0
@@ -160,8 +160,31 @@ while 1:
         win_matchs[sub_branch]=names[sub_branch].sata1()
         num_match+=win_matchs[sub_branch][1]
     for sub_branch in current_branch.name_subbranch:
+        print(win_matchs[sub_branch][1])
+        print(num_match)
         UCB[sub_branch]=win_matchs[sub_branch][0]/win_matchs[sub_branch][1]+C*np.sqrt(np.log(win_matchs[sub_branch][1])/num_match)
-    print(i)
+    temp=0
+
+    for sub_branch,ucb in   UCB.items():
+        if temp < ucb:
+            temp=ucb
+            current_branch=names[sub_branch]
+    if current_branch.leaf:
+        print('------------------')
+        print('-----YOU WIN------')
+        print('------------------')
+        break
+    
+    
+    your_branch=current_branch.play_input()
+    if names[your_branch].leaf:
+        print('------------------')
+        print('-----YOU LOSS-----')
+        print('------------------')
+        break
+    current_branch=names[your_branch]
+
+
 # zsd = names.copy()
 # for name in zsd:
 #     if str(name)[0:4] == 'tree':
