@@ -1,5 +1,5 @@
 import numpy as np
-import time
+import time as time
 
 def com(x):
     flag = "asd"
