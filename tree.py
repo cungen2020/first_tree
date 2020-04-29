@@ -4,7 +4,8 @@ import numpy as np
 import random
 import time
 names = locals()
-leaves= {}
+leaves = {}
+
 
 class Branch:
     """表示一个树枝"""
@@ -17,8 +18,8 @@ class Branch:
         self.name_subbranch = []
         self.num_subbranch = 0
         self.leaf = 0
-        if sum(sum(self.situation))==0:
-            self.leaf=1
+        if sum(sum(self.situation)) == 0:
+            self.leaf = 1
         self.wins = wins
         self.matchs = matchs
         self.current_player = 1  # 1表示当前player,-1表示对手
@@ -42,11 +43,12 @@ class Branch:
                         if sub_name not in names:
                             names[sub_name] = Branch(
                                 new_situation, sub_name, self.name)
-                        names[sub_name].current_player=self.current_player*(-1)
+                        names[sub_name].current_player = self.current_player * \
+                            (-1)
                         if sum(sum(new_situation)) == 0:  # 遇见叶
                             names[sub_name].leaf = 1
                             names[sub_name].matchs = 1
-                            leaves[sub_name]=names[sub_name].current_player
+                            leaves[sub_name] = names[sub_name].current_player
                         self.name_subbranch.append(sub_name)
 
         for len in [1, 2, 3]:  # raw
@@ -60,11 +62,12 @@ class Branch:
                         if sub_name not in names:
                             names[sub_name] = Branch(
                                 new_situation, sub_name, self.name)
-                        names[sub_name].current_player=self.current_player*(-1)
+                        names[sub_name].current_player = self.current_player * \
+                            (-1)
                         if sum(sum(new_situation)) == 0:
                             names[sub_name].leaf = 1
                             names[sub_name].matchs = 1
-                            leaves[sub_name]=names[sub_name].current_player
+                            leaves[sub_name] = names[sub_name].current_player
                         self.name_subbranch.append(sub_name)
         return self.num_subbranch-1
 
@@ -86,16 +89,16 @@ class Branch:
                 temp[0] = temp[0]+names[name].sata()[1]-names[name].sata()[0]
                 temp[1] = temp[1]+names[name].sata()[1]
             return temp
-    
+
     def sata1(self):
-        temp=[0,0]
-        for name,player in leaves.items():
+        temp = [0, 0]
+        for name, player in leaves.items():
             if self.name in name:
-                temp[1]+=1
-                temp[0]+=1-player*self.current_player
-        temp[0]=temp[0]/2
+                temp[1] += 1
+                temp[0] += 1-player*self.current_player
+        temp[0] = temp[0]/2
         return temp
-        
+
     def expend1(self):
         if self.creat_subbranch():
             temp0 = self
@@ -123,66 +126,72 @@ class Branch:
             #             1, names[temp].num_subbranch)-1]
 
     def play_input(self):
-        ary=np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],dtype=int)
+        ary = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [
+                       9, 10, 11, 12], [13, 14, 15, 16]], dtype=int)
         while 1:
+            print()
             print("The situation now :")
             print(ary*self.situation)
             print("Enter your move :")
             nums = [int(n) for n in input().split()]
+            new_situation = self.situation.copy()
             for num in nums:
-                new_situation=self.situation.copy()
-                new_situation[num//4][num%4-1]=0
+                new_situation[(num-1)//4][(num-1) % 4] = 0
+            
             for name in self.name_subbranch:
                 if (names[name].situation == new_situation).all():
-                    print()  11
-                    print('The situation now :')
-                    print(new_situation)                 
                     return name
+            print()
+            print('Invid input !!!')
             print('Invid input !!!')
 
 
-C=0.7
-a = np.ones([4, 4],dtype=np.int8)
+C = 0.7
+a = np.ones([4, 4], dtype=np.int8)
+# a[2:,2:]=np.ones([2,2])
+# a[2][2]=1
+
 tree = Branch(a, 'tree')
 
 current_branch = tree
 while 1:
-   
+
     current_branch.creat_subbranch()
     for name in current_branch.name_subbranch:
         for i in range(10):
             names[name].expend1()
-        
-    win_matchs={}
-    UCB={}
-    num_match=0
-    for sub_branch in current_branch.name_subbranch:
-        win_matchs[sub_branch]=names[sub_branch].sata1()
-        num_match+=win_matchs[sub_branch][1]
-    for sub_branch in current_branch.name_subbranch:
-        print(win_matchs[sub_branch][1])
-        print(num_match)
-        UCB[sub_branch]=win_matchs[sub_branch][0]/win_matchs[sub_branch][1]+C*np.sqrt(np.log(win_matchs[sub_branch][1])/num_match)
-    temp=0
 
-    for sub_branch,ucb in   UCB.items():
+    win_matchs = {}
+    UCB = {}
+    num_match = 0
+    for sub_branch in current_branch.name_subbranch:
+        win_matchs[sub_branch] = names[sub_branch].sata1()
+        num_match += win_matchs[sub_branch][1]
+    for sub_branch in current_branch.name_subbranch:
+        # print(win_matchs[sub_branch][1])
+        # print(num_match)
+        UCB[sub_branch] = win_matchs[sub_branch][0]/win_matchs[sub_branch][1] + \
+            C*np.sqrt(np.log(num_match/win_matchs[sub_branch][1]))
+    temp = -100
+    for sub_branch, ucb in UCB.items():
         if temp < ucb:
-            temp=ucb
-            current_branch=names[sub_branch]
+            temp = ucb
+            current_branch = names[sub_branch]
+   
+
     if current_branch.leaf:
         print('------------------')
         print('-----YOU WIN------')
         print('------------------')
         break
-    
-    
-    your_branch=current_branch.play_input()
+
+    your_branch = current_branch.play_input()
     if names[your_branch].leaf:
         print('------------------')
         print('-----YOU LOSS-----')
         print('------------------')
         break
-    current_branch=names[your_branch]
+    current_branch = names[your_branch]
 
 
 # zsd = names.copy()
@@ -192,5 +201,3 @@ while 1:
 #         if names[name].name_subbranch:
 
 #             print(names[name].name_subbranch)
-
-print(tree.sata1())
