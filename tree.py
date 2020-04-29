@@ -4,7 +4,7 @@ import numpy as np
 import random
 import time
 names = locals()
-
+leaves= {}
 
 class Branch:
     """表示一个树枝"""
@@ -42,11 +42,11 @@ class Branch:
                         if sub_name not in names:
                             names[sub_name] = Branch(
                                 new_situation, sub_name, self.name)
-
+                        names[sub_name].current_player=self.current_player*(-1)
                         if sum(sum(new_situation)) == 0:  # 遇见叶
                             names[sub_name].leaf = 1
                             names[sub_name].matchs = 1
-
+                            leaves[sub_name]=names[sub_name].current_player
                         self.name_subbranch.append(sub_name)
 
         for len in [1, 2, 3]:  # raw
@@ -60,11 +60,11 @@ class Branch:
                         if sub_name not in names:
                             names[sub_name] = Branch(
                                 new_situation, sub_name, self.name)
-
+                        names[sub_name].current_player=self.current_player*(-1)
                         if sum(sum(new_situation)) == 0:
                             names[sub_name].leaf = 1
                             names[sub_name].matchs = 1
-
+                            leaves[sub_name]=names[sub_name].current_player
                         self.name_subbranch.append(sub_name)
         return self.num_subbranch-1
 
@@ -86,7 +86,16 @@ class Branch:
                 temp[0] = temp[0]+names[name].sata()[1]-names[name].sata()[0]
                 temp[1] = temp[1]+names[name].sata()[1]
             return temp
-
+    
+    def sata1(self):
+        temp=[0,0]
+        for name,player in leaves.items():
+            if self.name in name:
+                temp[1]+=1
+                temp[0]+=1-player*self.current_player
+        temp[0]=temp[0]/2
+        return temp
+        
     def expend1(self):
         if self.creat_subbranch():
             temp0 = self
@@ -113,21 +122,45 @@ class Branch:
             #         temp = names[temp].name_subbranch[random.randint(
             #             1, names[temp].num_subbranch)-1]
 
+    def play_input(self):
+        ary=np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],dtype=int)
+        while 1:
+            print("The situation now :")
+            print(ary*self.situation)
+            print("Enter your move :")
+            nums = [int(n) for n in input().split()]
+            for num in nums:
+                new_situation=self.situation.copy()
+                new_situation[num//4-1][num%4-1]=0
+            for name in self.name_subbranch:
+                if (names[name].situation == new_situation).all():                   
+                    return name
+            print('Invid input !!!')
 
-a = np.ones([4, 4])
-# a[2:, 2:] = np.ones([2, 2])
-# a[2, 2] = 0
+
+C=0.7
+a = np.ones([4, 4],dtype=np.int8)
 tree = Branch(a, 'tree')
-# print(names)
-print(tree.name_subbranch)
-print(tree.num_subbranch)
-# print(tree.name_subbranch[random.randint(1,tree.num_subbranch)-1])
-print('=============')
-tree.expend1()
-tree.expend1()
-tree.expend1()
-for i in range(64*30):
-    tree.expend1()
+
+current_branch = tree
+while 1:
+    if current_branch.leaf:
+        print('------------------')
+        print('-----YOU WIN------')
+        print('------------------')
+    break
+    
+    current_branch.creat_subbranch()
+    for i in range(current_branch.num_subbranch):
+        current_branch.expend1()
+    win_matchs={}
+    UCB={}
+    num_match=0
+    for sub_branch in current_branch.name_subbranch:
+        win_matchs[sub_branch]=names[sub_branch].sata1()
+        num_match+=win_matchs[sub_branch][1]
+    for sub_branch in current_branch.name_subbranch:
+        UCB[sub_branch]=win_matchs[sub_branch][0]/win_matchs[sub_branch][1]+C*np.sqrt(np.log(win_matchs[sub_branch][1])/num_match)
     print(i)
 # zsd = names.copy()
 # for name in zsd:
@@ -137,12 +170,4 @@ for i in range(64*30):
 
 #             print(names[name].name_subbranch)
 
-#print(tree.sata())
-temp=[0,0]
-for i in tree.name_subbranch:
-    print(i)
-    print(names[i].sata())
-    temp[1]+=names[i].sata()[1]
-    temp[0]+=names[i].sata()[0]
-
-print(temp)
+print(tree.sata1())
