@@ -145,8 +145,9 @@ while 1:
 
     current_branch.creat_subbranch()
     if j == 0:
-        scale = 50
-        print("Initializing".center(scale+20, '-'))
+        scale = 33
+        print()
+        print("NEW GAME".center(scale+21, '-'))
         count = 20*current_branch.num_subbranch
         
         for name in current_branch.name_subbranch:
@@ -156,7 +157,8 @@ while 1:
                 c = 100*j//count
                 a='*'*(scale*j//count)
                 b='.'*(scale-scale*j//count)
-                print("\rCalculating:[{}->{}]{:3.0f}%".format( a, b,c), end='')
+                print("\rInitializing:[{}->{}]{:3.0f}%".format( a, b,c), end='')
+        print('\n'+"Let's start the game".center(scale+21, '-'))
         print()
     else:
          for name in current_branch.name_subbranch:
