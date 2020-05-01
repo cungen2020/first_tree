@@ -161,43 +161,21 @@ class Branch:
                         leaves[name_pa] = player
 
 
+print('\n'+"NEW GAME".center(54, '-'))
 C = 0.001
 a = np.ones([4, 4], dtype=np.int8)
-
-# a[0] = [1, 1, 1, 1]
-# a[1] = [1, 1, 1, 1]
-# a[2] = [1, 1, 1, 1]
-# a[3] = [1, 1, 1, 1]
-print(a)
 tree = Branch(a, 'tree')
 current_branch = tree
-j = 0
+tree.creat_subbranch()
+name = tree.play_input()
+current_branch = names[name]
+
 while 1:
     current_branch.creat_subbranch()
-    if j == 0:
-        scale = 33
-
-        print("NEW GAME".center(scale+21, '-'))
-        count = 10*current_branch.num_subbranch
-
-        for name in current_branch.name_subbranch:
-            for i in range(10):
-                names[name].expend1()
-                j += 1
-                c = 100*j//count
-                a = '*'*(scale*j//count)
-                b = '.'*(scale-scale*j//count)
-                print(
-                    "\rInitializing:[{}->{}]{:3.0f}%".format(a, b, c), end='')
-        print('\n'+"Let's start the game".center(scale+21, '-'))
-        
-    else:
-        for name in current_branch.name_subbranch:
-            for i in range(1000//current_branch.num_subbranch):
-                names[name].expend1()
-
+    for name in current_branch.name_subbranch:
+        for i in range(1000//current_branch.num_subbranch):
+            names[name].expend1()
     current_branch.del_black()
-
     if current_branch.num_subbranch == 0:
         print('----------------------------')
         print('--------AI surrender--------')
@@ -208,18 +186,19 @@ while 1:
     num_match = 0
 
     for sub_branch in current_branch.name_subbranch:
-
         win_matchs[sub_branch] = names[sub_branch].sata1()
         num_match += win_matchs[sub_branch][1]
+
     for sub_branch in current_branch.name_subbranch:
         UCB[sub_branch] = win_matchs[sub_branch][0]/win_matchs[sub_branch][1] + \
             C*np.sqrt(np.log(num_match/win_matchs[sub_branch][1]))
+
     temp = -100
     for sub_branch, ucb in UCB.items():
         if temp < ucb:
             temp = ucb
             current_branch = names[sub_branch]
-   
+
     if current_branch.leaf:
         print('----------------------------')
         print('----------YOU WIN-----------')
