@@ -166,12 +166,14 @@ class Branch:
 
 
 C = 0.001
-a = np.ones([4, 4], dtype=np.int8)
+a = np.zeros([4, 4], dtype=np.int8)
 #a[2:,2:]=np.ones([2,2])
 # a[1][0]=1
 # a[3][3]=1
-
 # a[1][3]=1
+a[0]=[1,0,1,0]
+a[1]=[0,0,1,0]
+a[3]=[1,1,1,0]
 tree = Branch(a, 'tree')
 current_branch = tree
 j = 0
