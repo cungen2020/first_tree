@@ -11,12 +11,12 @@ class Branch:
 
     def __init__(self, situation, name, father_name="tree", wins=0, matchs=0):
         """初始化"""
-        self.name = name             #节点ID
-        self.father = father_name    #父节点ID
+        self.name = name  # 节点ID
+        self.father = father_name  # 父节点ID
         self.situation = situation
-        self.name_subbranch = []     #子节点ID
-        self.num_subbranch = 0       #子节点总量
-        self.leaf = 0                #是否为叶
+        self.name_subbranch = []  # 子节点ID
+        self.num_subbranch = 0  # 子节点总量
+        self.leaf = 0  # 是否为叶
         if sum(sum(self.situation)) == 0:
             self.leaf = 1
         self.current_player = 1  # 1和-1表示两个参与者
@@ -102,7 +102,6 @@ class Branch:
                        9, 10, 11, 12], [13, 14, 15, 16]], dtype=int)
         while 1:
             print()
-            
             print("The situation now :")
             print(ary*self.situation)
             print("Enter your move :")
@@ -135,33 +134,30 @@ class Branch:
 
 C = 0
 a = np.ones([4, 4], dtype=np.int8)
-
-
 tree = Branch(a, 'tree')
-
 current_branch = tree
 j = 0
 while 1:
-
     current_branch.creat_subbranch()
     if j == 0:
         scale = 33
         print()
         print("NEW GAME".center(scale+21, '-'))
         count = 20*current_branch.num_subbranch
-        
+
         for name in current_branch.name_subbranch:
             for i in range(20):
                 names[name].expend1()
                 j += 1
                 c = 100*j//count
-                a='*'*(scale*j//count)
-                b='.'*(scale-scale*j//count)
-                print("\rInitializing:[{}->{}]{:3.0f}%".format( a, b,c), end='')
+                a = '*'*(scale*j//count)
+                b = '.'*(scale-scale*j//count)
+                print(
+                    "\rInitializing:[{}->{}]{:3.0f}%".format(a, b, c), end='')
         print('\n'+"Let's start the game".center(scale+21, '-'))
         print()
     else:
-         for name in current_branch.name_subbranch:
+        for name in current_branch.name_subbranch:
             for i in range(800//current_branch.num_subbranch):
                 names[name].expend1()
     win_matchs = {}
@@ -180,8 +176,8 @@ while 1:
         if temp < ucb:
             temp = ucb
             current_branch = names[sub_branch]
-   
-
+    print(UCB)
+    print(current_branch.name)
     if current_branch.leaf:
         print('----------------------------')
         print('----------YOU WIN-----------')
@@ -195,5 +191,4 @@ while 1:
         print('----------------------------')
         break
     current_branch = names[your_branch]
-
 
