@@ -14,6 +14,7 @@
 #### 使用说明
 
 使用python3,numpy,random
+
 tree3.0.py为AI先手
 tree3.1.py为用户先手
 
